@@ -34,4 +34,14 @@ public interface InvoiceRepositoryPort {
      * This should be called before any set of database operations that need to be atomic.
      */
     void beginTransaction();
+
+    /**
+     * Commits the current database transaction.
+     */
+    void commitTransaction();
+
+    /**
+     * Rolls back the current database transaction.
+     */
+    void rollbackTransaction();
 }

@@ -16,7 +16,7 @@ public class InvoiceValidationService {
     }
 
     public boolean validateInvoiceData(InvoiceDTO invoiceDTO) throws ValidationException {
-        Set<ConstraintViolation<InvoiceDTO>> violations = validator.validate(invoice::DTO);
+        Set<ConstraintViolation<InvoiceDTO>> violations = validator.validate(invoiceDTO);
         if (!violations.isEmpty()) {
             StringBuilder errorMessage = new StringBuilder();
             for (ConstraintViolation<InvoiceDTO> violation : violations) {

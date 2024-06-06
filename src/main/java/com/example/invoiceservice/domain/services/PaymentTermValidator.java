@@ -5,12 +5,8 @@ import java.math.BigDecimal;
 import com.example.invoiceservice.domain.ports.PaymentTermValidationPort;
 
 public class PaymentTermValidator implements PaymentTermValidationPort {
-    @Override
-    public boolean validate(PaymentTerms paymentTerms, BigDecimal amount) {
-        // Example validation logic
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            return false;
-        }
-        return paymentTerms != null && paymentTerms.getMinimumAmount().compareTo(amount) <= 0;
-    }
+	public boolean validate(PaymentTerms paymentTerms, BigDecimal amount) {
+		if (paymentTerms == null || amount == null) return false;
+		return amount.compareTo(BigDecimal.ZERO) > 0 && paymentTerms.getMinimumAmount().compareTo(amount) <= 0;
+	}
 }

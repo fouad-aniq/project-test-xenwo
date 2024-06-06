@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 /**
  * Defines payment terms including minimum amount and other relevant settings for invoice processing.
  */
-public class PaymentChooser {
+public class PaymentTerms {
 
     /**
      * The minimum payable amount to satisfy the payment terms.

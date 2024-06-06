@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.ValidationException;
+import com.example.invoiceservice.domain.enums.InvoiceStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

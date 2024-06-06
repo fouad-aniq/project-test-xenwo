@@ -2,7 +2,7 @@ package com.example.invoiceservice.domain.services;
 
 import com.example.invoiceservice.application.dtos.InvoiceDTO;
 import com.example.invoiceservice.domain.entities.InvoiceEntity;
-import com.example.invoiceservice.domain.exceptions.DatabaseAccessException;
+import com.example.invoiceseservice.domain.exceptions.DatabaseAccessException;
 import com.example.invoiceservice.domain.exceptions.InvoiceValidationException;
 import com.example.invoiceservice.domain.exceptions.PaymentProcessingException;
 import com.example.invoiceservice.domain.ports.InvoiceRepositoryPort;
@@ -16,7 +16,7 @@ public class InvoiceService {
     private final InvoiceRepositoryPort invoiceRepositoryPort;
     private final PaymentProcessingPort paymentProcessingPort;
 
-    public InvoiceService(InvoiceValidationService invoiceValidationService, InvoiceRepositoryPort invoiceRepositoryPort, PaymentProcessingPort paymentProcessingPort) {
+    public InvoiceService(InvoiceValidationService invoiceValidationService, InvoiceRepositoryPort invoiceRepositoryPort, PaymentProcessingPort paymentProcessingPort) { 
         this.invoiceValidationService = invoiceValidationService;
         this.invoiceRepositoryPort = invoiceRepositoryPort;
         this.paymentProcessingPort = paymentProcessingPort;
@@ -26,7 +26,8 @@ public class InvoiceService {
         if (!invoiceValidationService.validateInvoiceData(invoiceDTO)) {
             throw new InvoiceValidationException("Validation failed for the given invoice data.");
         }
-        InvoiceEntity invoice = new InvoiceEntity(invoiceDTO);
+        InvoiceEntity invoice = new InvoiceEntity();
+        invoice.setFromDTO(invoiceDTO);
         try {
             invoiceRepositoryPort.beginTransaction();
             InvoiceEntity savedInvoice = invoiceRepositoryPort.save(invoice);

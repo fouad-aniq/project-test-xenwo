@@ -2,8 +2,9 @@ package com.example.invoiceservice.domain.value_objects;
 
 import java.math.BigDecimal;
 import com.example.invoiceservice.domain.exceptions.InvalidPaymentTermException;
-import com.example.invoiceservice.domain.services.PaymentTermValidationPort;
+import com.example.invoiceservice.domain.ports.PaymentTermValidationPort;
 import com.example.invoiceservice.domain.services.PaymentTermValidator;
+import com.example.invoiceservice.domain.model.PaymentTerms;
 
 public class InvoiceValueObject {
 
@@ -29,12 +30,8 @@ public class InvoiceValueObject {
     }
 
     public boolean validatePaymentTerms() throws InvalidPaymentTermException {
-        PaymentTermValidationPort validator = getPaymentTermValidator();
+        PaymentTermValidationPort validator = new PaymentTermValidator();
         return validator.validate(this.paymentTerms, this.invoiceAmount);
-    }
-
-    private PaymentTermValidationPort getPaymentTermValidator() {
-        return new PaymentTermValidator();
     }
 
     public PaymentTerms getPaymentTerms() {

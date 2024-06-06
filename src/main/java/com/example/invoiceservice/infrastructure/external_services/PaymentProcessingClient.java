@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -17,29 +16,53 @@ public class PaymentProcessingClient implements com.example.invoiceservice.domai
     private static final Logger logger = LoggerFactory.getLogger(PaymentProcessingClient.class);
     private final RestTemplate restTemplate;
     @Value("${payment.service.url}")
-    private String paymentServiceUrl;
+    private String paymentServiceConfiguredUrl;
 
     @Autowired
-    public PaymentProcessingClient(RestTemplate restTemplate) {
+    public PaymentProcessingClient(Restemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     @Override
-    @Transactional
     public boolean setupPayment(InvoiceDTO invoiceDTO) {
         try {
-            restTemplate.postForObject(paymentServiceUrl + "/setup", invoiceDTO, String.class);
+            restTemplate.postForObject(paymentServiceConfiguredUrl + "/setup", invoiceDTO, String.class);
             return true;
         } catch (HttpClientErrorException | ResourceAccessException e) {
             logger.error("Network or HTTP Client Error during payment setup: ", e);
             return false;
         } catch (Exception e) {
-            logger.error("Unexpected error during payment setup: ", e);
-            throw new RuntimeException("System error occurred during payment setup", e);
+            logger.error("Unexpected error during payment setup: " + e.getMessage(), e);
+            return false;
         }
     }
 
+    @Override
     public CompletableFuture<Boolean> setupPaymentAsync(InvoiceDTO invoiceDTO) {
-        return CompletableFuture.supplyAsync(() -> setupPayment(invoiceDTO));
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                restTemplate.postForObject(paymentServiceConfiguredUrl + "/setup-async", invoiceDTO, String.class);
+                return true;
+            } catch (Exception e) {
+                logger.error("Error setting up payment asynchronously: " + e.getMessage(), e);
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void handlePaymentValidation(String validationMessage) {
+        logger.info("Payment validation: " + validationMessage);
+    }
+
+    @Override
+    public void handlePaymentFailure(String errorMessage) {
+        logger.error("Payment failure: " + errorMessage);
+    }
+
+    @Override
+    public boolean validatePaymentSetup(InvoiceDTO invoiceDTO) {
+        // Assuming some validation logic here
+        return true;
     }
 }
