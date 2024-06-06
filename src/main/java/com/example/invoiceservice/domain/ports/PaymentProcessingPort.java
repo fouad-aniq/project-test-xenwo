@@ -1,6 +1,5 @@
 package com.example.invoiceservice.domain.ports;
 
-import org.slf4j.Logger;
 import com.example.invoiceservice.application.dtos.InvoiceDTO;
 
 /**

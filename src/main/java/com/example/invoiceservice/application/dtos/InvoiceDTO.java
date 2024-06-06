@@ -2,10 +2,10 @@ package com.example.invoiceservice.application.dtos;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.util.Objects;
 
 /**
  * Data Transfer Object that facilitates moving invoice information between layers without exposing domain models or compromising data security.
@@ -30,7 +30,7 @@ public class InvoiceDTO {
                 ", totalAmount=" + Objects.toString(totalAmount) +
                 ", currency='" + currency + '\'' +
                 ", paymentTerms='" + paymentTerms + '\'' +
-                ", creationWriteDate=" + Objects.toString(creationDate) +
+                ", creationDate=" + Objects.toString(creationDate) +
                 ", status='" + status + '\'' +
                 '}';
     }
