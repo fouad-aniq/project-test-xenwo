@@ -15,21 +15,14 @@ public class InvoiceUpdateResponseDTO {
     @JsonProperty("updatedInvoice")
     private UpdatedInvoiceDTO updatedInvoice;
 
-    public void setSuccess(boolean success) {
+    public InvoiceUpdateResponseDTO(boolean success, String message) {
         this.success = success;
-    }
-
-    public void setMessage(String message) {
-        if (message == null || message.trim().isEmpty()) {
-            throw new IllegalArgumentException("Message cannot be empty.");
-        }
         this.message = message;
     }
 
-    public void setUpdatedInvoice(UpdatedInvoiceDTO updatedInvoice) {
-        if (updatedInvoice == null) {
-            throw new IllegalArgumentException("Updated invoice details cannot be null.");
-        }
+    public InvoiceUpdateResponseDTO(boolean success, String message, UpdatedInvoiceDTO updatedInvoice) {
+        this.success = success;
+        this.message = message;
         this.updatedInvoice = updatedInvoice;
     }
 }
