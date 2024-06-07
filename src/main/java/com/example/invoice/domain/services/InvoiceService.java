@@ -2,11 +2,12 @@ package com.example.invoice.domain.services;
 
 import com.example.invoice.domain.entities.InvoiceEntity;
 import com.example.invoice.domain.ports.InvoiceUpdatePort;
+import com.example.invoice.domain.exceptions.InvalidInvoiceUpdateException;
+import com.example.invoice.domain.exceptions.InvoiceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
-import java.util.List;
 
 /**
  * Service class for handling invoice operations.
@@ -35,14 +36,11 @@ public class InvoiceService {
      */
     @Transactional
     public InvoiceEntity updateInvoiceDetails(String invoiceId, Map<String, Object> updates) throws InvalidInvoiceUpdateException, InvoiceNotFoundException {
-        try {
-            InvoiceEntity invoice = invoiceUpdatePort.updateInvoice(invoiceId, updates);
-            logInvoiceChange(invoice, "Updated invoice details.");
-            return invoice;
-        } catch (InvalidInvoiceUpdateException | InvoiceNotFoundException e) {
-            // Handle exception appropriately
-            throw e;
-        }
+        InvoiceEntity invoice = new InvoiceEntity(invoiceId);
+        invoice.applyUpdates(updates);
+        invoice = invoiceUpdatePort.updateInvoice(invoice);
+        logInvoiceChange(invoice, "Updated invoice details.");
+        return invoice;
     }
 
     /**
@@ -51,7 +49,5 @@ public class InvoiceService {
      * @param changeDetail Detail of the change for logging.
      */
     private void logInvoiceChange(InvoiceEntity invoice, String changeDetail) {
-        // Implement logging logic here, potentially integrating with an external ELK system
-        // Example: log.info("Invoice change logged: ", changeDetail);
     }
 }

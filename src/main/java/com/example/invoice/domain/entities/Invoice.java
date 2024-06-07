@@ -18,14 +18,14 @@ public class Invoice {
     private List<InvoiceItem> items;
 
     public BigDecimal calculateTotal() {
-        if (items == null || items.isEmpty()) {
-            logger.info("Item list is empty or null.");
-            return BigDecimal.ZERO;
+        BigDecimal total = BigDecimal.ZERO;
+        if (items != null) {
+            for (InvoiceItem item : items) {
+                if (item != null && item.getPrice() != null) {
+                    total = total.add(item.getPrice().multiply(new BigDecimal(item.getQuantity())));
+                }
+            }
         }
-        BigDecimal total = items.stream()
-                .filter(item -> item != null && item.getPrice() != null)
-                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
         logger.info("Total calculated: {}", total);
         return total;
     }

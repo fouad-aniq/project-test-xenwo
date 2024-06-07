@@ -1,14 +1,12 @@
 package com.example.invoice.domain.entities;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-import lombok.Data;
-import lombok.AllArgsConstructor;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Data
-@AllArgsConstructor
 public class InvoiceEntity {
 
     private static final Logger logger = LoggerFactory.getLogger(InvoiceEntity.class);
@@ -16,6 +14,22 @@ public class InvoiceEntity {
     private String invoiceId;
     private ClientDetails clientDetails;
     private List<InvoiceItem> items;
+
+    public InvoiceEntity(String invoiceId, ClientDetails clientDetails, List<InvoiceItem> items) {
+        this.invoiceId = invoiceId;
+        this.clientDetails = clientDetails;
+        this.items = items;
+    }
+
+    public InvoiceEntity(String invoiceId) {
+        this.invoiceId = invoiceId;
+        this.clientDetails = new ClientDetails();
+        this.items = new ArrayList<>();
+    }
+
+    public void applyUpdates(Map<String, Object> updates) {
+        // Implementation of update logic
+    }
 
     public BigDecimal calculateTotal() {
         if (items == null || items.isEmpty()) {
