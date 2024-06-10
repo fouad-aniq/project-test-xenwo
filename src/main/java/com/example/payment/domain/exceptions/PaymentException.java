@@ -8,15 +8,15 @@ public class PaymentException extends Exception implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public PaymentRequest() {
+    public PaymentException() {
         super();
     }
 
-    public PaymentRequest(String message) {
+    public PaymentException(String message) {
         super(message);
     }
 
-    public PaymentRequest(String message, Throwable cause) {
+    public PaymentException(String message, Throwable cause) {
         super(message, cause);
     }
 }

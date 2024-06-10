@@ -5,7 +5,6 @@ import com.example.payment.domain.entities.PaymentResult;
 import com.example.payment.domain.exceptions.PaymentExecutionException;
 import com.example.payment.domain.exceptions.PaymentInitializationException;
 import com.example.payment.domain.ports.PaymentGatewayPort;
-import com.example.payment.domain.value_objects.PaymentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,32 +27,22 @@ public class PaymentProcessingService {
      *
      * @param paymentDTO the payment details
      * @return result of the payment process
+     * @throws PaymentInitializationException if fails to initialize the payment
+     * @throws PaymentExecutionException if fails to execute the payment
      */
     @Transactional
-    public PaymentResult processPayment(PaymentDTO paymentDTO) {
+    public PaymentResult processPayment(PaymentDTO paymentDTO) throws PaymentInitializationException, PaymentExecutionException {
         if (paymentDTO == null || paymentDTO.getAmount() <= 0 || paymentDTO.getCurrency().isEmpty() || paymentDTO.getPaymentMethod().isEmpty() || paymentDTO.getCardDetails() == null) {
             throw new IllegalArgumentException("Payment details are incomplete or invalid.");
         }
         logger.debug("Starting payment processing");
-
-        try {
-            logger.debug("Initializing payment");
-            paymentGatewayPort.initializePayment(paymentDTO);
-        } catch (PaymentInitializationException pie) {
-            logger.error("Payment initialization failed", pie);
-            return new PaymentResult(null, "failed", "", 0);
-        }
-
-        try {
-            logger.debug("Executing payment");
-            PaymentResponse response = paymentGatewayPort.executePayment(paymentDTO);
-            double totalCost = calculateTotalCost(paymentDTO.getAmount(), response.getDiscount(), paymentDTO.getTaxRate());
-            logger.debug("Payment processed successfully");
-            return new PaymentResult(response.getTransactionId(), "success", "https://example.com/receipts/" + response.getTransactionId() + ".pdf", totalCost);
-        } catch (PaymentExecutionException pee) {
-            logger.error("Payment execution failed", pee);
-            return new PaymentResult(null, "failed", "", 0);
-        }
+        logger.debug("Initializing payment");
+        paymentGatewayPort.initializePayment(paymentDTO);
+        logger.debug("Executing payment");
+        PaymentResponse response = paymentGatewayPort.executePayment(paymentDTO);
+        double totalCost = calculateTotalCost(paymentDTO.getAmount(), response.getDiscount(), paymentDTO.getTaxRate());
+        logger.debug("Payment processed successfully");
+        return new PaymentResult(response.getTransactionId(), "success", "https://example.com/receipts/" + response.getTransactionId() + ".pdf", totalCost);
     }
 
     /**

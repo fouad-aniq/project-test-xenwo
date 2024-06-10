@@ -5,6 +5,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Properties;
+import java.security.SecurityException;
 
 @Component
 public class PaymentConfigManager implements com.example.payment.domain.ports.PaymentConfigService {
@@ -18,11 +19,11 @@ public class PaymentConfigManager implements com.example.payment.domain.ports.Pa
         this.env = env;
     }
 
-    public void loadConfiguration(String configSource) throws IOException, SecurityEventsException {
+    public void loadConfiguration(String configSource) throws IOException, SecurityException {
         Properties props = new Properties();
         try (var inputStream = this.getClass().getResourceAsStream(configSource)) {
             if (inputStream == null) {
-                throw new IOException("Configuration file '" + configSource + "' not found in classpath.");
+                throw new IOException("Configuration file '" + configPath + "' not found in classpath.");
             }
             props.load(inputStream);
             this.apiKey = props.getProperty("payment.gateway.apiKey");

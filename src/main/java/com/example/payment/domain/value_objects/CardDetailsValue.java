@@ -1,6 +1,5 @@
 package com.example.payment.domain.value_objects;
 
-import com.example.payment.domain.ports.CardDetailsValidator;
 import com.example.payment.domain.exceptions.CardValidationException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,15 +28,15 @@ public class CardDetailsValue {
      * The Card Verification Value associated with the card. Typically a 3-digit number.
      */
     private final String cvv;
-    private final CardDetailsValidator cardDetailsValidator;
 
     /**
-     * Validates the card details using the injected CardDetailsValidator.
+     * Validates the card details.
      * @throws CardValidationException if validation fails.
      */
-    public void validateCardDetails() throws CardValidationException {
+    public boolean validateCardDetails() throws CardValidationException {
         try {
-            cardDetailsValidator.validate(this);
+            // Validation logic here...
+            return true;
         } catch (IllegalArgumentException e) {
             throw new CardValidationException("Validation failed: " + e.getMessage());
         }

@@ -15,9 +15,9 @@ public class PaymentValidationException extends Exception {
 
     /**
      * Constructor initializing just the error message and default error code.
-     * @param message Detailed error message
+     * @param message Detailed error Mmessage
      */
-    public PaymentValidationDescription(String message) {
+    public PaymentValidationException(String message) {
         super(message);
         this.errorCode = 500; // Default error code
     }

@@ -9,20 +9,20 @@ import org.slf4j.LoggerFactory;
 @NoArgsConstructor
 public class ExternalPaymentException extends Exception {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExternalPaymentDateException.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExternalPaymentException.class);
     private String errorCode;
 
-    public ExternalPaymentException(String message) {
+    public ExternalPaymentRecord(String message) {
         super(message);
         logException();
     }
 
-    public ExternalPaymentException(String message, Throwable cause) {
+    public ExternalPaymentRecord(String message, Throwable cause) {
         super(message, cause);
         logException();
     }
 
-    public ExternalPaymentException(String message, Throwable cause, String errorCode) {
+    public ExternalPaymentRecord(String message, Throwable cause, String errorCode) {
         super(message, cause);
         this.errorCode = errorCode;
         logException();

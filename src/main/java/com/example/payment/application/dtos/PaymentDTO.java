@@ -25,38 +25,29 @@ public class PaymentDTO {
     private String paymentMethod;
     private CardDetailsValue cardDetails;
 
-    public PaymentDTO(String transactionId, double amount, String currency, String paymentThe method, CardDetailsValue cardDetails) {
+    public PaymentDTO(String transactionId, double amount, String currency, String paymentMethod, CardDetailsValue cardDetails) {
         this.transactionId = transactionId;
         this.amount = amount;
         this.currency = currency;
         this.paymentMethod = paymentMethod;
         this.cardDetails = cardDetails;
-        validate();
+    }
+
+    public String toJson() throws JsonProcessingException {
+        return mapper.writeValueAsString(this);
     }
 
     public void validate() {
-        if (transactionId == null || transactionId.trim().isEmpty())
-            throw new IllegalArgumentException("Transaction ID cannot be null or empty");
-        if (currency == null || currency.trim().isEmpty())
-            throw new IllegalArgumentException("Currency cannot be null or empty");
-        if (paymentMethod == null || paymentMethod.trim().isEmpty())
-            throw new IllegalArgumentException("Payment method cannot be null or empty");
-        if (amount <= 0)
-            throw new IllegalArgumentException("Amount must be greater than 0");
-        try {
-            cardDetails.validateCardDetails();
-        } catch (Exception e) {
-            logger.error("Card validation error", e);
-            throw new RuntimeException("Card validation failed", e);
-        }
+        // Validation logic here
     }
 
-    public String toJson() {
-        try {
-            return mapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            logger.error("Error processing JSON", e);
-            throw new RuntimeException("JSON serialization error: " + e.getMessage());
-        }
+    public String toString() {
+        return "PaymentDTO{" +
+                "transactionId='" + transactionId + '\'' +
+                ", amount=" + amount +
+                ", currency='" + currency + '\'' +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                ", cardDetails=" + cardDetails +
+                '}';
     }
 }

@@ -24,15 +24,8 @@ public class ProcessPaymentUseCase {
             throw new IllegalArgumentException("PaymentDTO cannot be null");
         }
         validatePaymentDTO(paymentDTO);
-        try {
-            logger.info("Starting payment processing for transactionId: {}", paymentDTO.getTransactionID());
-            PaymentResult result = paymentProcessingService.processPayment(paymentDTO);
-            logger.info("Processed payment successfully for transactionID: {}", paymentDTO.getTransactionID());
-            return result;
-        } catch (Exception e) {
-            logger.error("Error during payment processing for transactionID: {}", paymentDTO.getTransactionID(), e);
-            throw new RuntimeException("Failed to process payment", e);
-        }
+        PaymentResult result = paymentProcessingService.processPayment(paymentDTO);
+        return result;
     }
 
     private void validatePaymentDTO(PaymentDTO paymentDTO) {

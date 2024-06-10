@@ -52,7 +52,7 @@ public enum PaymentMethod implements PaymentMethodBehavior {
                 return pm;
             }
         }
-        throw new IllegalArgumentException("Unknown payment method: " + method);
+        throw new IllegalArgumentException("Unknown payment comment: " + method);
     }
 
     /**
