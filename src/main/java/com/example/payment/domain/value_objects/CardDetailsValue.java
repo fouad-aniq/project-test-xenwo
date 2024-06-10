@@ -1,19 +1,18 @@
 package com.example.payment.domain.value_objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.example.payment.domain.ports.CardDetailsValidator;
 import com.example.payment.domain.exceptions.CardValidationException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Encapsulates all card related information such as card number, expiry date, and CVV needed for processing payments securely.
  */
 @Getter
+@Setter
 @AllArgsConstructor
 public class CardDetailsValue {
-    private static final Logger logger = LoggerFactory.getLogger(CardDetailsValue.class);
     /**
      * The credit/debit card number. Ensured to be exactly 16 digits.
      */
@@ -33,19 +32,14 @@ public class CardDetailsValue {
     private final CardDetailsValidator cardDetailsValidator;
 
     /**
-     * Validates the card details using the injected CardetailsValidator.
-     * @return true if validation is successful, otherwise false.
+     * Validates the card details using the injected CardDetailsValidator.
      * @throws CardValidationException if validation fails.
      */
-    public boolean validateCardDetails() throws CardValidationException {
-        logger.info("Starting validation for card details.");
+    public void validateCardDetails() throws CardValidationException {
         try {
-            return cardDetailsValidator.validate(this);
+            cardDetailsValidator.validate(this);
         } catch (IllegalArgumentException e) {
-            logger.error("Validation failed due to invalid input: ", e);
             throw new CardValidationException("Validation failed: " + e.getMessage());
-        } finally {
-            logger.info("Validation completed.");
         }
     }
 }

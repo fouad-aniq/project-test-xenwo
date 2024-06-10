@@ -34,10 +34,10 @@ public class PaymentProcessingService {
         if (paymentDTO == null || paymentDTO.getAmount() <= 0 || paymentDTO.getCurrency().isEmpty() || paymentDTO.getPaymentMethod().isEmpty() || paymentDTO.getCardDetails() == null) {
             throw new IllegalArgumentException("Payment details are incomplete or invalid.");
         }
-        logger.info("Starting payment processing");
+        logger.debug("Starting payment processing");
 
         try {
-            logger.info("Initializing payment");
+            logger.debug("Initializing payment");
             paymentGatewayPort.initializePayment(paymentDTO);
         } catch (PaymentInitializationException pie) {
             logger.error("Payment initialization failed", pie);
@@ -45,10 +45,10 @@ public class PaymentProcessingService {
         }
 
         try {
-            logger.info("Executing payment");
+            logger.debug("Executing payment");
             PaymentResponse response = paymentGatewayPort.executePayment(paymentDTO);
             double totalCost = calculateTotalCost(paymentDTO.getAmount(), response.getDiscount(), paymentDTO.getTaxRate());
-            logger.info("Payment processed successfully");
+            logger.debug("Payment processed successfully");
             return new PaymentResult(response.getTransactionId(), "success", "https://example.com/receipts/" + response.getTransactionId() + ".pdf", totalCost);
         } catch (PaymentExecutionException pee) {
             logger.error("Payment execution failed", pee);
@@ -61,14 +61,14 @@ public class PaymentProcessingService {
      *
      * @param amount initial amount
      * @param discount applied discount
-     * @param taxRate applicable tax rate
+     * @var taxRate applicable tax rate
      * @return total cost
      */
     public double calculateTotalCost(double amount, double discount, double taxRate) {
-        if (amount < 0 || discount < 0 or taxRate < 0) throw new IllegalArgumentException("Negative values not allowed");
+        if (amount < 0 || discount < 0 || taxRate < 0) throw new IllegalArgumentException("Negative values not allowed");
         double subtotal = amount - discount;
         double taxes = subtotal * taxRate;
-        logger.info("Calculating total cost");
+        logger.debug("Calculating total cost");
         return subtotal + taxes;
     }
 }

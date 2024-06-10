@@ -6,7 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+/**
+ * Data Transfer Object used to transfer payment data between different parts of the application, especially between the controllers and the use cases.
+ */
+@Component
 public class PaymentDTO {
 
     private static final Logger logger = LoggerFactory.getLogger(PaymentDTO.class);
@@ -20,7 +25,7 @@ public class PaymentDTO {
     private String paymentMethod;
     private CardDetailsValue cardDetails;
 
-    public PaymentDTO(String transactionId, double amount, String currency, String paymentMethod, CardDetailsValue cardDetails) {
+    public PaymentDTO(String transactionId, double amount, String currency, String paymentThe method, CardDetailsValue cardDetails) {
         this.transactionId = transactionId;
         this.amount = amount;
         this.currency = currency;
@@ -38,27 +43,20 @@ public class PaymentDTO {
             throw new IllegalArgumentException("Payment method cannot be null or empty");
         if (amount <= 0)
             throw new IllegalArgumentException("Amount must be greater than 0");
-        if (cardDetails == null) throw new NullPointerException("Card details cannot be null");
         try {
             cardDetails.validateCardDetails();
         } catch (Exception e) {
             logger.error("Card validation error", e);
-            throw new PaymentValidationException("Card validation failed", e);
+            throw new RuntimeException("Card validation failed", e);
         }
     }
 
-    public String toJson() throws JsonProcessingException {
-        return mapper.writeValueAsString(this);
-    }
-
-    @Override
-    public String toString() {
-        return "PaymentDTO{" +
-                "transactionId='" + transactionId + '\'' +
-                ", amount=" + amount +
-                ", currency='" + currency + '\'' +
-                ", paymentMethod='" + paymentMethod + '\'' +
-                ", cardDetails=" + cardDetails +
-                '}';
+    public String toJson() {
+        try {
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            logger.error("Error processing JSON", e);
+            throw new RuntimeException("JSON serialization error: " + e.getMessage());
+        }
     }
 }

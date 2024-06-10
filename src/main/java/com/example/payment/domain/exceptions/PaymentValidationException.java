@@ -17,7 +17,10 @@ public class PaymentValidationException extends Exception {
      * Constructor initializing just the error message and default error code.
      * @param message Detailed error message
      */
-    public PaymentSeems there's a typo in the second constructor where 'errorKey' is used instead of 'errorCode'. Also, using Lombok's @AllArgsConstructor could simplify construction further. Additionally, if JSON serialization of 'errorCode' and 'message' needs specific handling, it might require implementation.
+    public PaymentValidationDescription(String message) {
+        super(message);
+        this.errorCode = 500; // Default error code
+    }
 
     /**
      * Constructor initializing message and cause of the exception, with default error code.
@@ -27,13 +30,5 @@ public class PaymentValidationException extends Exception {
     public PaymentValidationException(String message, Throwable cause) {
         super(message, cause);
         this.errorCode = 500; // Default error code
-    }
-
-    /**
-     * Retrieves the error code associated with the validation failure.
-     * @return error code
-     */
-    public int getErrorCode() {
-        return errorCode;
     }
 }

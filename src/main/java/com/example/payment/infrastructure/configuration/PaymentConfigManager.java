@@ -5,15 +5,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Properties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.example.payment.domain.ports.PaymentConfigService;
-import org.springframework.context.annotation.Profile;
 
 @Component
-public class PaymentConfigManager implements PaymentConfigService {
+public class PaymentConfigManager implements com.example.payment.domain.ports.PaymentConfigService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PaymentConfigManager.class);
     private String apiKey;
     private String gatewayUrl;
     private final Environment env;
@@ -23,34 +18,22 @@ public class PaymentConfigManager implements PaymentConfigService {
         this.env = env;
     }
 
-    @Profile({"dev", "test", "prod"})
-    public void loadConfiguration(String configSource) throws IOException, SecurityException {
-        try {
-            Properties props = loadProperties(configSource);
-            validateProperties(props);
-        } catch (IOException e) {
-            logger.error("IO Error loading configuration from " + configSource, e);
-            throw e;
-        } catch (SecurityException e) {
-            logger.error("Security issue with loading configuration from " + configSource, e);
-            throw e;
-        }
-    }
-
-    private Properties loadProperties(String configSource) throws IOException {
+    public void loadConfiguration(String configSource) throws IOException, SecurityEventsException {
         Properties props = new Properties();
         try (var inputStream = this.getClass().getResourceAsStream(configSource)) {
             if (inputStream == null) {
                 throw new IOException("Configuration file '" + configSource + "' not found in classpath.");
             }
             props.load(inputStream);
-            return props;
+            this.apiKey = props.getProperty("payment.gateway.apiKey");
+            this.gatewayUrl = props.getProperty("payment.gateway.url");
+            validateConfiguration();
+        } catch (IOException | SecurityException e) {
+            throw new SecurityException("Error loading configuration from " + configSource, e);
         }
     }
 
-    private void validateProperties(Properties props) {
-        apiKey = props.getProperty("payment.gateway.apiKey");
-        gatewayUrl = props.getProperty("payment.gateway.url");
+    private void validateConfiguration() {
         if (apiKey == null || apiKey.trim().isEmpty() || gatewayUrl == null || gatewayUrl.trim().isEmpty()) {
             throw new IllegalStateException("API Key and Gateway URL must be set correctly.");
         }

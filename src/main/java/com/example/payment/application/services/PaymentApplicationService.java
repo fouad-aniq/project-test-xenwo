@@ -1,13 +1,12 @@
 package com.example.payment.application.services;
 
-import com.example.payment.domain.services.PaymentProcessingService;
+import com.example.payment.domain.services.PaymentProcessing+Service;
 import com.example.payment.infrastructure.configuration.PaymentConfigManager;
 import com.example.payment.application.dtos.PaymentDTO;
 import com.example.payment.domain.entities.PaymentResult;
 import com.example.payment.domain.exceptions.PaymentValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,12 +28,12 @@ public class PaymentApplicationService {
 
     @Before("execution(* com.example.payment.application.services.PaymentApplicationService.processPayment(..))")
     public void logBeforeProcessPayment() {
-        logger.info("Starting payment processing: {}", this); 
+        logger.info("Starting payment processing");
     }
 
-    @AfterReturning(pointcut = "execution(* com.example.payment.application.services.PaymentApplicationService.process(...)", returning="result")
+    @AfterReturning(pointcut = "execution(* com.example.payment.application.services.PaymentApplicationService.processPayment(..))", returning="result")
     public void logAfterProcessPayment(PaymentDTO result) {
-        logger.info("Payment processed successfully: Transaction ID {}", result.getTransactionId());
+        logger.info("Payment processed successfully: {}", result.getTransactionId());
     }
 
     @AfterThrowing(pointcut = "execution(* com.example.payment.application.services.PaymentApplicationService.processPayment(..))", throwing="ex")
@@ -42,7 +41,6 @@ public class PaymentApplicationService {
         logger.error("Error during payment processing: {}", ex.getMessage());
     }
 
-    @Transactional
     public PaymentDTO processPayment(PaymentDTO paymentDto) throws PaymentValidationException {
         if (paymentDto == null) {
             throw new PaymentValidationException("Payment data is null");

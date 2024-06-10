@@ -10,8 +10,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import java.util.logging.Logger;
 import com.example.payment.domain.ports.PaymentGatewayClientPort;
+import com.example.payment.domain.exceptions.PaymentProcessingException;
 
-public class ExternalServiceClient implements PaymentGatewayClientPort {
+public class ExternalServiceClient implements PaymentGatewayClientWebservice {
 
     private HttpClient httpClient;
     private Map<String, String> apiKeys;
@@ -34,13 +35,13 @@ public class ExternalServiceClient implements PaymentGatewayClientPort {
             .uri(java.net.URI.create(apiUrl + "/payments"))
             .headers("Content-Type", "application/json", "Authorization", "Bearer " + apiKeys.get(request.getPaymentInfo().getPaymentMethod()))
             .POST(HttpRequest.BodyPublishers.ofString(request.toJson()))
-            .timeout(java.time.Duration.ofMinutes(2)) // Timeout set to 2 minutes
+            .timeout(java.time.Duration.ofMinutes(2))
             .build();
         try {
             HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             logResponse(response);
             return parseResponse(response);
-        } catch (HttpRequestException e) {
+        } catch (IOException e) {
             apiRequestLogger.severe("HTTP request failed: " + e.getMessage());
             throw new PaymentProcessingException("Failed to process payment due to HTTP error", e);
         }
@@ -48,14 +49,12 @@ public class ExternalServiceClient implements PaymentGatewayClientPort {
 
     private void initializeConnection() {
         apiRequestLogger.info("Initializing connection with API URL: " + apiUrl);
-        // Additional configurations for different gateways could be added here based on the apiKeys
     }
 
     private void validateRequest(PaymentRequest request) {
         if (request == null || request.getPaymentInfo() == null) {
             throw new IllegalArgumentException("Invalid payment request data.");
         }
-        // Further validations can be added here
     }
 
     private void logResponse(HttpResponse<String> response) {
@@ -69,6 +68,8 @@ public class ExternalServiceClient implements PaymentGatewayClientPort {
         if (response.statusCode() != 200) {
             throw new PaymentProcessingException("Payment processing failed with status: " + response.statusCode());
         }
-        return new PaymentResponse("transaction123", "success", null); // Simplified example assuming JSON parsing
+        // Simulate JSON parsing here
+        // Assuming a simple successful response for demonstration
+        return new PaymentResponse("transaction123", "success", null);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.payment.application.use_cases;
 
 import com.example.payment.application.dtos.PaymentDTO;
+import com.example.payment.domain.entities.PaymentResult;
 import com.example.payment.domain.services.PaymentProcessingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,18 +19,18 @@ public class ProcessPaymentUseCase {
         this.paymentProcessingService = paymentProcessingService;
     }
 
-    public PaymentDTO processPayment(PaymentDTO paymentDTO) {
+    public PaymentResult processPayment(PaymentDTO paymentDTO) {
         if (paymentDTO == null) {
             throw new IllegalArgumentException("PaymentDTO cannot be null");
         }
         validatePaymentDTO(paymentDTO);
         try {
-            logger.info("Starting payment processing for transactionId: {}", paymentDTO.getTransactionId());
-            PaymentDTO result = paymentProcessingService.processPayment(paymentDTO);
-            logger.info("Processed payment successfully for transactionID: {}", result.getTransactionId());
+            logger.info("Starting payment processing for transactionId: {}", paymentDTO.getTransactionID());
+            PaymentResult result = paymentProcessingService.processPayment(paymentDTO);
+            logger.info("Processed payment successfully for transactionID: {}", paymentDTO.getTransactionID());
             return result;
         } catch (Exception e) {
-            logger.error("Error during payment processing for transactionID: {}", paymentDTO.getTransactionId(), e);
+            logger.error("Error during payment processing for transactionID: {}", paymentDTO.getTransactionID(), e);
             throw new RuntimeException("Failed to process payment", e);
         }
     }

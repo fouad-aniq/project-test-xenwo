@@ -43,7 +43,7 @@ public class StripePaymentAdapter implements PaymentGatewayPort {
             PaymentResponse response = stripeClient.createCharge(paymentDetails);
             logger.info("Payment executed successfully: Transaction ID {}", response.getTransactionId());
             return response;
-        } catch (CardException | RateLimitException | StripeException e) {
+        } catch (CardException | RateLimitException e) {
             logger.error("Payment execution failed", e);
             rollbackTransaction();
             throw new PaymentExecutionException("Payment execution failed", e);
@@ -56,7 +56,6 @@ public class StripePaymentAdapter implements PaymentGatewayPort {
     }
 
     private void validatePaymentDetails(PaymentDTO paymentDetails) {
-        // Enhanced validation logic here
         logger.debug("Validating payment details.");
         if (!isValidPaymentDetails(paymentDetails)) {
             throw new IllegalArgumentException("Invalid payment details");
